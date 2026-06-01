@@ -105,8 +105,8 @@ function sizeCanvas() {
   if (h > 0) {
     cv.style.height = Math.max(100, h - 110) + 'px';
   } else {
-    // Fallback: use window height minus fixed chrome (top-bar ~130px + shake ~50px + tab ~60px)
-    cv.style.height = Math.max(100, window.innerHeight - 280) + 'px';
+    // Fallback: use window height minus fixed chrome (top-bar ~130px + tab ~60px)
+    cv.style.height = Math.max(100, window.innerHeight - 230) + 'px';
   }
 }
 
@@ -279,20 +279,28 @@ function doShake() {
   const now = Date.now();
   if (now - S.lastShake < 150) return;
   S.lastShake = now;
-  S.shakeBuf.push(now);
-  const btn = document.getElementById('shake-btn');
-  btn.classList.add('shaking'); setTimeout(() => btn.classList.remove('shaking'), 400);
-  const txt = document.getElementById('shake-txt');
-  if (S.shakeBuf.length >= 2 && (S.shakeBuf[S.shakeBuf.length-1] - S.shakeBuf[S.shakeBuf.length-2]) < 800) {
-    clearTimeout(S.shakeTimer); S.shakeBuf = [];
-    show('camera'); txt.textContent = 'Shake ×1 = next probe · Shake ×2 = camera'; return;
+
+  // Single shake on camera → back to scan
+  if (S.page === 'camera') {
+    show('scan');
+    return;
   }
+
+  // On scan page: single shake = next probe, double shake = camera
+  if (S.page !== 'scan') return;
+  S.shakeBuf.push(now);
+
+  if (S.shakeBuf.length >= 2 && (S.shakeBuf[S.shakeBuf.length-1] - S.shakeBuf[S.shakeBuf.length-2]) < 800) {
+    clearTimeout(S.shakeTimer);
+    S.shakeBuf = [];
+    show('camera');
+    return;
+  }
+
   clearTimeout(S.shakeTimer);
-  txt.textContent = 'Shake again for camera…';
   S.shakeTimer = setTimeout(() => {
     S.shakeBuf = [];
-    txt.textContent = 'Shake ×1 = next probe · Shake ×2 = camera';
-    if (!S.frozen && S.page === 'scan') switchProbe((S.pi + 1) % 3);
+    if (!S.frozen) switchProbe((S.pi + 1) % 3);
   }, 700);
 }
 
@@ -350,7 +358,7 @@ on('pb37',       () => switchProbe(1));
 on('pb70',       () => switchProbe(2));
 on('btn-freeze', toggleFreeze);
 on('btn-save',   doSave);
-on('shake-btn',  doShake);
+
 on('tab-scan',   () => show('scan'));
 on('tab-rec',    () => show('records'));
 on('tab-cam',    () => show('camera'));
