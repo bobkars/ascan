@@ -38,8 +38,15 @@ function show(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('show'));
   document.getElementById('pg-' + id).classList.add('show');
   S.page = id;
-  if (id === 'scan' && !S.frozen) { Signal.start(S.pi, probes[S.pi].angle); } else { Signal.stop(); }
-  if (id === 'camera') { startCam(); }                   else { stopCam(); }
+  Signal.stop();
+  stopCam();
+  if (id === 'scan') {
+    setTimeout(() => {
+      sizeCanvas();
+      if (!S.frozen) Signal.start(S.pi, probes[S.pi].angle);
+    }, 30);
+  }
+  if (id === 'camera') { setTimeout(startCam, 30); }
   if (id === 'records') { renderRecords(); }
 }
 
@@ -94,7 +101,9 @@ function sizeCanvas() {
   const cv = document.getElementById('cv-live');
   const body = document.querySelector('.scan-body');
   if (!cv || !body) return;
-  cv.style.height = Math.max(80, body.offsetHeight - 100) + 'px';
+  const h = body.offsetHeight;
+  console.log('sizeCanvas: body.offsetHeight =', h);
+  cv.style.height = Math.max(100, h - 110) + 'px';
 }
 
 // ══════════════════════════════════════════
@@ -319,13 +328,11 @@ document.getElementById('pg-session').addEventListener('touchmove', function(e) 
 
 // Session
 on('btn-start', () => {
-  console.log('btn-start clicked');
   S.session.partId = document.getElementById('f-part').value || 'WLD-7741-B';
   S.session.op     = document.getElementById('f-op').value   || 'J. Miller';
   S.session.loc    = document.getElementById('f-loc').value  || '';
   S.session.mat    = document.getElementById('f-mat').value  || 'Steel 316L';
   show('scan');
-  setTimeout(sizeCanvas, 50);
   switchProbe(0);
   toast('Session started · ' + S.session.partId);
   if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function')
