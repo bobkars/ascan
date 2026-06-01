@@ -297,10 +297,12 @@ function toast(msg) {
 // ══════════════════════════════════════════
 function on(id, fn) {
   const el = document.getElementById(id);
-  if (el) el.addEventListener('click', fn);
+  if (el) { el.addEventListener('click', fn); }
+  else { console.warn('on(): element not found:', id); }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOMContentLoaded fired');
 
 // Signal setup — done here so drawWave is guaranteed defined
 if (typeof Signal === 'undefined') {
@@ -317,6 +319,7 @@ document.getElementById('pg-session').addEventListener('touchmove', function(e) 
 
 // Session
 on('btn-start', () => {
+  console.log('btn-start clicked');
   S.session.partId = document.getElementById('f-part').value || 'WLD-7741-B';
   S.session.op     = document.getElementById('f-op').value   || 'J. Miller';
   S.session.loc    = document.getElementById('f-loc').value  || '';
