@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="UltraScan">
+<title>UltraScan NDT</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ══════ SESSION ══════ -->
+<div class="page show" id="pg-session">
+  <h1>UltraScan NDT</h1>
+  <p>New inspection session</p>
+  <button id="btn-start">Begin Inspection →</button>
+  <label class="flabel">Part / Weld ID</label>
+  <input class="finput" id="f-part" type="text" value="WLD-7741-B" autocomplete="off">
+  <label class="flabel">Operator</label>
+  <input class="finput" id="f-op" type="text" value="J. Miller" autocomplete="off">
+  <label class="flabel">Location</label>
+  <input class="finput" id="f-loc" type="text" value="Bay 3, Joint A" autocomplete="off">
+  <label class="flabel">Material</label>
+  <select class="finput" id="f-mat">
+    <option>Steel 316L</option><option>Steel A6</option>
+    <option>Aluminium 6061</option><option>Inconel 625</option>
+    <option>Titanium Grade 5</option>
+  </select>
+</div>
+
+<!-- ══════ SCAN ══════ -->
+<div class="page" id="pg-scan">
+  <div class="top-bar">
+    <div class="top-bar-row1">
+      <span class="top-title" id="scan-title">A-scan · 0°</span>
+      <span class="frozen-pill" id="frozen-pill">❄ FROZEN</span>
+    </div>
+    <div class="probe-row">
+      <div class="pbtn a0" id="pb0">0°</div>
+      <div class="pbtn"    id="pb37">37°</div>
+      <div class="pbtn"    id="pb70">70°</div>
+    </div>
+  </div>
+  <div class="scan-body">
+    <div class="scan-lbl-row">
+      <span class="scan-lbl" id="scan-mode">TIME-DOMAIN · LIVE</span>
+      <span class="scan-info">10 MHz · 68 dB</span>
+    </div>
+    <canvas id="cv-live"></canvas>
+    <div class="metrics">
+      <div class="met"><div class="met-v" id="m-d">12.4</div><div class="met-l">Depth mm</div></div>
+      <div class="met"><div class="met-v" id="m-a">68%</div><div class="met-l">Amplitude</div></div>
+      <div class="met"><div class="met-v" id="m-t">3.2µs</div><div class="met-l">TOF</div></div>
+    </div>
+    <div class="act-row" style="margin-top:10px;">
+      <div class="abtn blue" id="btn-save">Save scan</div>
+      <div class="abtn" id="btn-freeze">Freeze</div>
+    </div>
+  </div>
+  <div class="shake-bar">
+    <div id="shake-btn">📳</div>
+    <span id="shake-txt">Shake ×1 = next probe · Shake ×2 = camera</span>
+  </div>
+  <div class="tab-bar">
+    <div class="tab on" id="tab-scan">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Live
+    </div>
+    <div class="tab" id="tab-rec">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Records
+    </div>
+    <div class="tab" id="tab-cam">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Camera
+    </div>
+    <div class="tab" id="tab-home">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Session
+    </div>
+  </div>
+</div>
+
+<!-- ══════ RECORDS ══════ -->
+<div class="page" id="pg-records">
+  <div class="top-bar">
+    <div class="top-bar-row1">
+      <span class="top-title">Saved records</span>
+      <span class="top-title" id="rec-count" style="color:var(--t3)">0 scans</span>
+    </div>
+    <div class="act-row">
+      <div class="abtn" id="btn-rec-back">← Live</div>
+    </div>
+  </div>
+  <div class="rec-scroll" id="rec-list">
+    <div class="empty-state" id="rec-empty">No scans yet.<br>Freeze and tap Save on the live screen.</div>
+  </div>
+  <div class="tab-bar">
+    <div class="tab" id="tab-scan2">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Live
+    </div>
+    <div class="tab on" id="tab-rec2">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Records
+    </div>
+    <div class="tab" id="tab-cam2">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Camera
+    </div>
+    <div class="tab" id="tab-home2">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Session
+    </div>
+  </div>
+</div>
+
+<!-- ══════ CAMERA ══════ -->
+<div class="page" id="pg-camera">
+  <div class="top-bar">
+    <div class="top-bar-row1">
+      <span class="top-title">Sample photo</span>
+      <span class="top-title" id="cam-probe-lbl" style="color:var(--blue)">Probe: 0°</span>
+    </div>
+    <div class="act-row">
+      <div class="abtn" id="btn-cam-back">← Back</div>
+      <div class="abtn blue" id="btn-cam-cap">📷 Capture</div>
+    </div>
+  </div>
+  <div class="cam-view">
+    <canvas id="cv-cam"></canvas>
+    <div class="cam-frame-overlay">
+      <div class="cam-frame">
+        <div class="cc tl"></div><div class="cc tr"></div>
+        <div class="cc bl"></div><div class="cc br"></div>
+      </div>
+    </div>
+    <div class="cam-probe-tag" id="cam-probe-tag">0°</div>
+    <div class="capture-flash" id="flash"></div>
+  </div>
+  <div class="photo-strip" id="photo-strip"></div>
+  <div class="capture-row"><button id="btn-capture"></button></div>
+  <div class="tab-bar">
+    <div class="tab" id="tab-scan3">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Live
+    </div>
+    <div class="tab" id="tab-rec3">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Records
+    </div>
+    <div class="tab on" id="tab-cam3">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Camera
+    </div>
+    <div class="tab" id="tab-home3">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Session
+    </div>
+  </div>
+</div>
+
+<!-- ══════ DETAIL ══════ -->
+<div class="page" id="pg-detail">
+  <div class="detail-scroll">
+    <div class="back-btn" id="btn-detail-back">
+      <svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 1L1 7l6 6"/></svg>Records
+    </div>
+    <div class="d-badge" id="d-badge"></div>
+    <div class="d-desc" id="d-desc"></div>
+    <canvas id="cv-detail" height="120"></canvas>
+    <div class="d-grid">
+      <div class="d-met"><div class="d-met-v" id="d-dep"></div><div class="d-met-k">Depth mm</div></div>
+      <div class="d-met"><div class="d-met-v" id="d-amp"></div><div class="d-met-k">Amplitude</div></div>
+      <div class="d-met"><div class="d-met-v" id="d-tof"></div><div class="d-met-k">TOF µs</div></div>
+      <div class="d-met"><div class="d-met-v">68 dB</div><div class="d-met-k">Gain</div></div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Session</div>
+      <div class="info-row"><span class="ik">Part ID</span><span class="iv" id="d-part"></span></div>
+      <div class="info-row"><span class="ik">Operator</span><span class="iv" id="d-op"></span></div>
+      <div class="info-row"><span class="ik">Material</span><span class="iv" id="d-mat"></span></div>
+      <div class="info-row"><span class="ik">Frequency</span><span class="iv">10 MHz</span></div>
+      <div class="info-row"><span class="ik">Velocity</span><span class="iv">5920 m/s</span></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>
