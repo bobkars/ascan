@@ -19,6 +19,11 @@ let S = {
 // SIGNAL → CANVAS
 // Wire Signal.onFrame to the live canvas renderer
 // ══════════════════════════════════════════
+if (typeof Signal === 'undefined') {
+  console.error('signal.js failed to load — check the file is in your GitHub repo');
+  // Stub so app.js doesn't crash
+  window.Signal = { start(){}, stop(){}, capture(){ return new Array(300).fill(0); }, onFrame: null };
+}
 Signal.onFrame = function(pts) {
   const cv = document.getElementById('cv-live');
   if (cv) drawWave(cv, pts, S.pi, false);
