@@ -31,16 +31,6 @@ let S = {
 // SIGNAL → CANVAS
 // Wire Signal.onFrame to the live canvas renderer
 // ══════════════════════════════════════════
-if (typeof Signal === 'undefined') {
-  console.error('signal.js failed to load — check the file is in your GitHub repo');
-  // Stub so app.js doesn't crash
-  window.Signal = { start(){}, stop(){}, capture(){ return new Array(300).fill(0); }, onFrame: null };
-}
-Signal.onFrame = function(pts) {
-  const cv = document.getElementById('cv-live');
-  if (cv) drawWave(cv, pts, S.pi, false);
-};
-
 // ══════════════════════════════════════════
 // PAGE NAVIGATION
 // ══════════════════════════════════════════
@@ -310,6 +300,17 @@ function on(id, fn) {
   if (el) el.addEventListener('click', fn);
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+
+// Signal setup — done here so drawWave is guaranteed defined
+if (typeof Signal === 'undefined') {
+  window.Signal = { start(){}, stop(){}, capture(){ return new Array(300).fill(0); }, onFrame: null };
+}
+Signal.onFrame = function(pts) {
+  const cv = document.getElementById('cv-live');
+  if (cv) drawWave(cv, pts, S.pi, false);
+};
+
 document.getElementById('pg-session').addEventListener('touchmove', function(e) {
   if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT') e.preventDefault();
 }, { passive: false });
@@ -368,3 +369,5 @@ if (typeof DeviceMotionEvent !== 'undefined') {
 }
 
 window.addEventListener('resize', sizeCanvas);
+
+}); // DOMContentLoaded
