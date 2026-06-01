@@ -280,9 +280,20 @@ function doShake() {
   if (now - S.lastShake < 150) return;
   S.lastShake = now;
 
-  // Single shake on camera → back to scan
+  // On camera page: single shake = capture, double shake = back to scan
   if (S.page === 'camera') {
-    show('scan');
+    S.shakeBuf.push(now);
+    if (S.shakeBuf.length >= 2 && (S.shakeBuf[S.shakeBuf.length-1] - S.shakeBuf[S.shakeBuf.length-2]) < 800) {
+      clearTimeout(S.shakeTimer);
+      S.shakeBuf = [];
+      show('scan');
+      return;
+    }
+    clearTimeout(S.shakeTimer);
+    S.shakeTimer = setTimeout(() => {
+      S.shakeBuf = [];
+      capturePhoto();
+    }, 700);
     return;
   }
 
