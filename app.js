@@ -1,4 +1,16 @@
 // ══════════════════════════════════════════
+// ERROR DISPLAY — remove after debugging
+// ══════════════════════════════════════════
+window.onerror = function(msg, src, line) {
+  document.body.innerHTML = '<div style="padding:20px;color:#fff;background:#000;font-family:monospace;font-size:14px;">'
+    + '<b style="color:#f66">JS ERROR</b><br><br>'
+    + msg + '<br><br>'
+    + 'File: ' + src + '<br>'
+    + 'Line: ' + line
+    + '</div>';
+};
+
+// ══════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════
 const probes = [
