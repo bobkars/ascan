@@ -32,7 +32,7 @@
 
 <!-- ══════ SCAN ══════ -->
 <div class="page" id="pg-scan">
-  <div id="dbg" style="background:#f00;color:#fff;font-size:12px;font-family:monospace;padding:4px 8px;flex-shrink:0;">waiting...</div>
+  <div id="dbg" style="display:none;background:#f00;color:#fff;font-size:12px;font-family:monospace;padding:4px 8px;flex-shrink:0;"></div>
   <div class="top-bar">
     <div class="top-bar-row1">
       <span class="top-title" id="scan-title">A-scan · 0°</span>
@@ -42,6 +42,10 @@
       <div class="pbtn a0" id="pb0">0°</div>
       <div class="pbtn"    id="pb37">37°</div>
       <div class="pbtn"    id="pb70">70°</div>
+    </div>
+    <div class="act-row">
+      <div class="abtn blue" id="btn-save">Save scan</div>
+      <div class="abtn" id="btn-freeze">Freeze</div>
     </div>
   </div>
   <div class="scan-body">
@@ -54,10 +58,6 @@
       <div class="met"><div class="met-v" id="m-d">12.4</div><div class="met-l">Depth mm</div></div>
       <div class="met"><div class="met-v" id="m-a">68%</div><div class="met-l">Amplitude</div></div>
       <div class="met"><div class="met-v" id="m-t">3.2µs</div><div class="met-l">TOF</div></div>
-    </div>
-    <div class="act-row" style="margin-top:10px;">
-      <div class="abtn blue" id="btn-save">Save scan</div>
-      <div class="abtn" id="btn-freeze">Freeze</div>
     </div>
   </div>
   <div class="shake-bar">

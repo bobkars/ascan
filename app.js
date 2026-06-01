@@ -102,8 +102,12 @@ function sizeCanvas() {
   const body = document.querySelector('.scan-body');
   if (!cv || !body) return;
   const h = body.offsetHeight;
-  console.log('sizeCanvas: body.offsetHeight =', h);
-  cv.style.height = Math.max(100, h - 110) + 'px';
+  if (h > 0) {
+    cv.style.height = Math.max(100, h - 110) + 'px';
+  } else {
+    // Fallback: use window height minus fixed chrome (top-bar ~130px + shake ~50px + tab ~60px)
+    cv.style.height = Math.max(100, window.innerHeight - 280) + 'px';
+  }
 }
 
 // ══════════════════════════════════════════
@@ -306,12 +310,10 @@ function toast(msg) {
 // ══════════════════════════════════════════
 function on(id, fn) {
   const el = document.getElementById(id);
-  if (el) { el.addEventListener('click', fn); }
-  else { console.warn('on(): element not found:', id); }
+  if (el) el.addEventListener('click', fn);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOMContentLoaded fired');
 
 // Signal setup — done here so drawWave is guaranteed defined
 if (typeof Signal === 'undefined') {
@@ -319,7 +321,10 @@ if (typeof Signal === 'undefined') {
 }
 Signal.onFrame = function(pts) {
   const cv = document.getElementById('cv-live');
-  if (cv) drawWave(cv, pts, S.pi, false);
+  if (!cv) return;
+  // If canvas has no height, size it first
+  if (!cv.style.height || cv.offsetHeight === 0) sizeCanvas();
+  drawWave(cv, pts, S.pi, false);
 };
 
 document.getElementById('pg-session').addEventListener('touchmove', function(e) {
